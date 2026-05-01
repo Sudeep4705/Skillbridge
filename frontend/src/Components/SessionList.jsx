@@ -63,44 +63,62 @@ export default function SessionList({ batchId, refresh }) {
         <div className="flex flex-col gap-3">
           {sessions.map((session) => (
             <div
-              key={session._id}
-              onClick={() => setSelectedSessionId(session._id)}
-              className={`cursor-pointer rounded-xl border px-4 py-3 transition-all
-                ${selectedSessionId === session._id
-                  ? "bg-orange-50 border-orange-400"
-                  : "bg-gray-50 border-gray-200 hover:border-orange-300"
-                }`}
-            >
-              {/* Session Title */}
-              <h3 className="text-sm font-semibold text-gray-800">
-                {session.title}
-              </h3>
+  key={session._id}
+  onClick={() => setSelectedSessionId(session._id)}
+  className={`cursor-pointer rounded-xl border px-4 py-3 transition-all duration-200
+    ${
+      selectedSessionId === session._id
+        ? "bg-orange-50 border-orange-400 shadow"
+        : "bg-gray-50 border-gray-200 hover:border-orange-300 hover:shadow-sm"
+    }`}
+>
+  <div className="flex justify-between items-center">
+    <div>
+      {/* Session Title */}
+      <h3 className="text-sm font-semibold text-gray-800">
+         {session.title}
+      </h3>
 
-              {/* Time */}
-              <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                <Clock size={12} className="text-orange-400" />
-                {session.startTime} - {session.endTime}
-              </p>
+      {/* Time */}
+      <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+        <Clock size={12} className="text-orange-400" />
+        {session.startTime} - {session.endTime}
+      </p>
+    </div>
 
-              {/* Student Mark Attendance Button */}
-              {User?.role === "Student" && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    markAttendance(session._id);
-                  }}
-                  className="mt-3 flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  <CheckSquare size={13} />
-                  Mark Attendance
-                </button>
-              )}
+    {/* Arrow indicator */}
+    <span className="text-gray-400 text-lg">→</span>
+  </div>
 
-              {/* Attendance List for Admin Roles */}
-              {selectedSessionId === session._id && canViewAttendance && (
-                <AttendanceList sessionId={session._id} />
-              )}
-            </div>
+  {/* Hint text */}
+  <p className="text-[11px] text-gray-400 mt-2">
+    Click to view attendance
+  </p>
+
+  {/* Student Mark Attendance Button */}
+  {User?.role === "Student" && (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        markAttendance(session._id);
+      }}
+      className="mt-3 flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+    >
+      <CheckSquare size={13} />
+      Mark Attendance
+    </button>
+  )}
+
+  {/* Attendance List */}
+  {selectedSessionId === session._id && canViewAttendance && (
+    <div className="mt-3 p-3 bg-white border rounded-lg">
+      <p className="text-xs font-semibold text-gray-600 mb-2">
+        Attendance
+      </p>
+      <AttendanceList sessionId={session._id} />
+    </div>
+  )}
+</div>
           ))}
         </div>
       )}
