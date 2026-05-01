@@ -3,7 +3,7 @@ const User = require("../Model/auth.model")
 module.exports.getAllStudents = async (req, res) => {
   try {
     const students = await User.find({ role: "Student" })
-      .select("firstname email"); // only needed fields
+      .select("firstname email"); 
 
     return res.status(200).json(students);
   } catch (error) {
