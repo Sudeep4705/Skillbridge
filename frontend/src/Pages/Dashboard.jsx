@@ -8,30 +8,23 @@ import SessionList from "../Components/SessionList";
 import CreateBatch from "../Components/CreateBatch";
 import AddStudents from "../Components/AddStudents";
 import CreateSession from "../Components/CreateSession";
+import { LogOut, BookOpen, MousePointerClick, Users, CalendarPlus, LayoutDashboard } from "lucide-react";
 
 export default function Dashboard() {
   const { User, setUser } = useContext(AuthContext);
   const [batch, setBatch] = useState([]);
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [refreshSessions, setRefreshSessions] = useState(false);
+  const [activeTab, setActiveTab] = useState("sessions");
   const navigate = useNavigate();
 
-  const canCreateBatch =
-    User?.role === "Trainer" || User?.role === "Institution";
-
+  const canCreateBatch = User?.role === "Trainer" || User?.role === "Institution";
   const isTrainer = User?.role === "Trainer";
-
-  const isViewer =
-    User?.role === "Programme Manager" ||
-    User?.role === "Monitoring Officer";
+  const isViewer = User?.role === "Programme Manager" || User?.role === "Monitoring Officer";
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "http://localhost:8007/auth/logout",
-        {},
-        { withCredentials: true }
-      );
+      await axios.post("http://localhost:8007/auth/logout", {}, { withCredentials: true });
       setUser(null);
       toast.success("Logged out successfully");
       navigate("/login");
@@ -42,10 +35,7 @@ export default function Dashboard() {
 
   const getBatches = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8007/batch/my-batches",
-        { withCredentials: true }
-      );
+      const res = await axios.get("http://localhost:8007/batch/my-batches", { withCredentials: true });
       setBatch(res.data);
     } catch (error) {
       toast.error(error?.response?.data?.message);
@@ -58,84 +48,163 @@ export default function Dashboard() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ backgroundColor: "#fde8e0", fontFamily: "'Inter', sans-serif" }}
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#fdf4f0", fontFamily: "'Inter', sans-serif" }}
     >
-      {/* Navbar */}
-      <div className="bg-white px-6 py-4 flex justify-between items-center">
-        <span className="font-semibold text-gray-800">SkillBridge</span>
 
-        <button
-          onClick={handleLogout}
-          className="text-sm bg-orange-500 text-white px-4 py-2 rounded-full"
-        >
-          Logout
-        </button>
-      </div>
-
-      {/* ✅ Create Batch (hide for viewer roles) */}
-      {!isViewer && canCreateBatch && (
-        <div className="p-5">
-          <CreateBatch onSuccess={getBatches} />
+      {/* Top Navbar */}
+      <div className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <BookOpen className="text-orange-500" size={20} />
+          <span className="font-bold text-gray-800 text-lg">SkillBridge</span>
         </div>
-      )}
-
-      {/* Batch List */}
-      <div className="flex gap-4 p-5 flex-wrap">
-        {batch.map((data) => (
-          <div
-            key={data._id}
-            onClick={() => setSelectedBatchId(data._id)}
-            className={`p-5 rounded-xl shadow cursor-pointer transition
-              ${
-                selectedBatchId === data._id
-                  ? "bg-orange-200 border-2 border-orange-500"
-                  : "bg-white"
-              }
-            `}
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">{User?.name}</span>
+          <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">{User?.role}</span>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1 text-sm bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full transition-colors"
           >
-            <p className="font-semibold">{data.batchName}</p>
-            <p>{data.courseName}</p>
-            <p className="text-sm text-gray-500">{data.level}</p>
-          </div>
-        ))}
+            <LogOut size={14} />
+            Logout
+          </button>
+        </div>
       </div>
 
-      {/* Message */}
-      {batch.length > 0 && !selectedBatchId && (
-        <p className="px-5 text-gray-500">
-          👉 Please select a batch
-        </p>
-      )}
+      {/* Body: Sidebar + Main */}
+      <div className="flex flex-1">
 
-      {/* Sessions (ALL roles can view) */}
-      {selectedBatchId && (
-        <div className="p-5">
-          <SessionList
-            batchId={selectedBatchId}
-            refresh={refreshSessions}
-          />
-        </div>
-      )}
+        {/* Left Sidebar — Batch List */}
+        <div className="w-64 bg-white shadow-sm p-5 flex flex-col gap-4 min-h-screen">
 
-      {/* ✅ Add Students (ONLY Trainer) */}
-      {isTrainer && selectedBatchId && (
-        <div className="p-5">
-          <AddStudents batchId={selectedBatchId} />
-        </div>
-      )}
+          {/* Sidebar Title */}
+          <div className="flex items-center gap-2 mb-2">
+            <LayoutDashboard size={18} className="text-orange-500" />
+            <h2 className="text-sm font-semibold text-gray-700">My Batches</h2>
+          </div>
 
-      {/* ✅ Create Session (ONLY Trainer) */}
-      {isTrainer && selectedBatchId && (
-        <div className="p-5">
-          <CreateSession
-            batchId={selectedBatchId}
-            onSuccess={() =>
-              setRefreshSessions((prev) => !prev)
-            }
-          />
+          {/* Batch Items */}
+          {batch.length === 0 ? (
+            <p className="text-xs text-gray-400">No batches yet</p>
+          ) : (
+            batch.map((data) => (
+              <div
+                key={data._id}
+                onClick={() => {
+                  setSelectedBatchId(data._id);
+                  setActiveTab("sessions");
+                }}
+                className={`p-3 rounded-xl cursor-pointer border transition-all
+                  ${selectedBatchId === data._id
+                    ? "bg-orange-50 border-orange-400"
+                    : "bg-gray-50 border-gray-200 hover:border-orange-300"
+                  }`}
+              >
+                <p className="text-sm font-semibold text-gray-800">{data.batchName}</p>
+                <p className="text-xs text-gray-500">{data.courseName}</p>
+                <p className="text-xs text-orange-400 mt-0.5">{data.level}</p>
+              </div>
+            ))
+          )}
+
+          {/* Create Batch button at bottom of sidebar */}
+          {!isViewer && canCreateBatch && (
+            <div
+              onClick={() => setActiveTab("createBatch")}
+              className={`mt-auto p-3 rounded-xl cursor-pointer border transition-all flex items-center gap-2
+                ${activeTab === "createBatch"
+                  ? "bg-orange-50 border-orange-400"
+                  : "bg-gray-50 border-gray-200 hover:border-orange-300"
+                }`}
+            >
+              <BookOpen size={14} className="text-orange-400" />
+              <p className="text-sm font-medium text-gray-700">Create Batch</p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Main Content */}
+        <div className="flex-1 p-6 flex flex-col gap-5 max-w-2xl">
+
+          {/* No batch selected */}
+          {!selectedBatchId && activeTab !== "createBatch" && (
+            <div className="flex items-center gap-2 text-sm text-gray-400 mt-4">
+              <MousePointerClick size={16} className="text-orange-400" />
+              <p>Select a batch from the left to get started</p>
+            </div>
+          )}
+
+          {/* Create Batch Panel */}
+          {activeTab === "createBatch" && (
+            <CreateBatch onSuccess={() => { getBatches(); setActiveTab("sessions"); }} />
+          )}
+
+          {/* Tabs — Sessions / Add Students / Create Session */}
+          {selectedBatchId && activeTab !== "createBatch" && (
+            <>
+              {/* Tab Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setActiveTab("sessions")}
+                  className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                    ${activeTab === "sessions"
+                      ? "bg-orange-500 text-white border-orange-500"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
+                    }`}
+                >
+                  <LayoutDashboard size={13} /> Sessions
+                </button>
+
+                {isTrainer && (
+                  <>
+                    <button
+                      onClick={() => setActiveTab("addStudent")}
+                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                        ${activeTab === "addStudent"
+                          ? "bg-orange-500 text-white border-orange-500"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
+                        }`}
+                    >
+                      <Users size={13} /> Add Student
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab("createSession")}
+                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                        ${activeTab === "createSession"
+                          ? "bg-orange-500 text-white border-orange-500"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
+                        }`}
+                    >
+                      <CalendarPlus size={13} /> Create Session
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Tab Content */}
+              {activeTab === "sessions" && (
+                <SessionList batchId={selectedBatchId} refresh={refreshSessions} />
+              )}
+
+              {activeTab === "addStudent" && isTrainer && (
+                <AddStudents batchId={selectedBatchId} />
+              )}
+
+              {activeTab === "createSession" && isTrainer && (
+                <CreateSession
+                  batchId={selectedBatchId}
+                  onSuccess={() => {
+                    setRefreshSessions((prev) => !prev);
+                    setActiveTab("sessions");
+                  }}
+                />
+              )}
+            </>
+          )}
+
+        </div>
+      </div>
     </div>
   );
 }

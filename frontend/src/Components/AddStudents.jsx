@@ -1,12 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { UserPlus } from "lucide-react";
 
+export default function AddStudents({ batchId }) {
+  const [studentId, setStudentId] = useState("");
 
-export default function AddStudents({batchId}) {
-      const [studentId, setStudentId] = useState("");
-
-      const handleAdd = async () => {
+  const handleAdd = async () => {
     if (!batchId) {
       return toast.error("Select a batch first");
     }
@@ -25,28 +25,32 @@ export default function AddStudents({batchId}) {
     }
   };
 
-
   return (
-    <>
-        <div className="p-5 bg-white rounded shadow">
-      <h3>Add Student to Batch</h3>
+    <div className="p-6 bg-white rounded-2xl shadow-md w-full max-w-md">
 
+      {/* Title */}
+      <div className="flex items-center gap-2 mb-5">
+        <UserPlus className="text-blue-500" size={22} />
+        <h3 className="text-lg font-semibold text-gray-800">Add Student to Batch</h3>
+      </div>
+
+      {/* Input */}
       <input
         placeholder="Enter Student ID"
         value={studentId}
         onChange={(e) => setStudentId(e.target.value)}
-        className="border p-2 mr-2"
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
       />
 
+      {/* Button */}
       <button
         onClick={handleAdd}
-        className="bg-blue-500 text-white px-3 py-1 rounded"
+        className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
       >
-        Add
+        <UserPlus size={16} />
+        Add Student
       </button>
-    </div>
 
-    </>
-    
-  )
+    </div>
+  );
 }
