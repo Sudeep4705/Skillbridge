@@ -23,25 +23,8 @@ const formsubmit = async(data)=>{
     setrole(userRole);
 
     toast.success(res.data.message);
-
-    if (userRole === "Student") {
-      navigate("/dashboard");
-    } 
-    else if (userRole === "Trainer") {
-      navigate("/dashboard");
-    } 
-    else if (userRole === "Institution") {
-      navigate("/dashboard");
-    } 
-    else if (userRole === "Programme Manager") {
-      navigate("/dashboard");
-    } 
-    else if (userRole === "Monitoring Officer") {
-      navigate("/dashboard");
-    } 
-    else {
-      navigate("/dashboard");
-    }
+      navigate("/dashboard")
+   
 
   }
      catch(error) {

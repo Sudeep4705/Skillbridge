@@ -5,6 +5,7 @@ const cookieParser=require("cookie-parser")
 const authRoutes = require("./Routes/auth.routes")
 const batchRoutes =require("./Routes/batch.routes")
 const sessionRoutes = require("./Routes/session.routes")
+const attendanceRoutes = require("./Routes/attendance.routes")
 const cors = require("cors")
 const app =  express()
 
@@ -35,6 +36,7 @@ app.use(cors({origin:"http://localhost:5173",credentials:true}))
 app.use("/auth",authRoutes)
 app.use("/batch",batchRoutes)
 app.use("/session",sessionRoutes)
+app.use("/attendance",attendanceRoutes)
 
 
 // server

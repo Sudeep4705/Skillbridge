@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken")
 
 const validateAuth = async(req,res,next)=>{
     try{
-        console.log("hitttt");
       const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
      if(!token)
         return res.status(401).json({message:"no token"})

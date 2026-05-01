@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-
 const batchSchema = new Schema({
     batchName:{
         type:String,
         required:true,
         trim:true
-        
     },
     courseName:{
         type:String,
