@@ -123,19 +123,38 @@ export default function Dashboard() {
             <p className="text-xs text-gray-400">No batches yet</p>
           ) : (
             batch.map((data) => (
-              <div
-                key={data._id}
-                onClick={() => handleBatchSelect(data._id)}
-                className={`p-3 rounded-xl cursor-pointer border transition-all
-                  ${selectedBatchId === data._id
-                    ? "bg-orange-50 border-orange-400"
-                    : "bg-gray-50 border-gray-200 hover:border-orange-300"
-                  }`}
-              >
-                <p className="text-sm font-semibold text-gray-800">{data.batchName}</p>
-                <p className="text-xs text-gray-500">{data.courseName}</p>
-                <p className="text-xs text-orange-400 mt-0.5">{data.level}</p>
-              </div>
+             <div
+  key={data._id}
+  onClick={() => handleBatchSelect(data._id)}
+  className={`p-3 rounded-xl cursor-pointer border transition-all duration-200
+    ${
+      selectedBatchId === data._id
+        ? "bg-orange-50 border-orange-400 shadow"
+        : "bg-gray-50 border-gray-200 hover:border-orange-300 hover:shadow-sm"
+    }`}
+>
+  <div className="flex justify-between items-center">
+    <div>
+      <p className="text-sm font-semibold text-gray-800">
+        {data.batchName}
+      </p>
+      <p className="text-xs text-gray-500">
+         {data.courseName}
+      </p>
+      <p className="text-xs text-orange-400 mt-0.5">
+         {data.level}
+      </p>
+    </div>
+
+    {/* Arrow indicator */}
+    <span className="text-gray-400 text-lg">→</span>
+  </div>
+
+  {/* Hint text */}
+  <p className="text-[10px] text-gray-400 mt-2">
+    Click to view sessions
+  </p>
+</div>
             ))
           )}
 
