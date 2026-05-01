@@ -16,7 +16,7 @@ export default function SessionList({ batchId, refresh }) {
     const fetchSession = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8007/session/${batchId}`,
+          `https://skillbridge-2kec.onrender.com/session/${batchId}`,
           { withCredentials: true }
         );
         setsessions(res.data);
@@ -31,7 +31,7 @@ export default function SessionList({ batchId, refresh }) {
   const markAttendance = async (sessionId) => {
     try {
       await axios.post(
-        "http://localhost:8007/attendance/mark",
+        "https://skillbridge-2kec.onrender.com/attendance/mark",
         { sessionId, batchId },
         { withCredentials: true }
       );

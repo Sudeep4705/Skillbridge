@@ -13,7 +13,7 @@ export default function ResetPassword() {
 
   const formsubmit = async (data)=>{
     try {
-      let res = await axios.post(`http://localhost:8007/auth/reset-password/${token}`, { password: data.password }, { withCredentials: true })
+      let res = await axios.post(`https://skillbridge-2kec.onrender.com/auth/reset-password/${token}`, { password: data.password }, { withCredentials: true })
       toast.success(res.data.message)
       navigate("/login")
     } catch(error) {

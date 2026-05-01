@@ -13,7 +13,7 @@ export default function AddStudents({ batchId }) {
 
     try {
       await axios.post(
-        "http://localhost:8007/batch/add-student",
+        "https://skillbridge-2kec.onrender.com/batch/add-student",
         { batchId, studentId },
         { withCredentials: true }
       );

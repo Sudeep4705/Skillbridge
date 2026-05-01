@@ -13,7 +13,7 @@ const [Loading,setLoading] = useState(true)
 useEffect(()=>{
     const verify = async()=>{
         try{
-            let res =await axios.get("http://localhost:8007/auth/me",{withCredentials:true})
+            let res =await axios.get("https://skillbridge-2kec.onrender.com/auth/me",{withCredentials:true})
             setUser(res.data.user)
         }catch(error){
             console.log(error);

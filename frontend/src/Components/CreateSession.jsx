@@ -18,7 +18,7 @@ export default function CreateSession({ batchId, onSuccess }) {
 
     try {
       await axios.post(
-        "http://localhost:8007/session/create",
+        "https://skillbridge-2kec.onrender.com/session/create",
         { ...data, batchId },
         { withCredentials: true }
       );

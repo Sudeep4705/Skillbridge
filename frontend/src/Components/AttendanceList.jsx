@@ -13,7 +13,7 @@ export default function AttendanceList({ sessionId }) {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8007/attendance/${sessionId}`,
+          `https://skillbridge-2kec.onrender.com/attendance/${sessionId}`,
           { withCredentials: true }
         );
         setAttendance(res.data);

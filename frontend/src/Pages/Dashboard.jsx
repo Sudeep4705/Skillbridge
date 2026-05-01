@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:8007/auth/logout", {}, { withCredentials: true });
+      await axios.post("https://skillbridge-2kec.onrender.com/auth/logout", {}, { withCredentials: true });
       setUser(null);
       toast.success("Logged out successfully");
       navigate("/login");
@@ -39,7 +39,7 @@ export default function Dashboard() {
 
   const getBatches = async () => {
     try {
-      const res = await axios.get("http://localhost:8007/batch/my-batches", { withCredentials: true });
+      const res = await axios.get("https://skillbridge-2kec.onrender.com/batch/my-batches", { withCredentials: true });
       setBatch(res.data);
     } catch (error) {
       toast.error(error?.response?.data?.message);

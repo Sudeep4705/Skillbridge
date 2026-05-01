@@ -19,7 +19,7 @@ export default function Register() {
 
   const formsubmit = async (data) => {
     try {
-      let res = await axios.post("http://localhost:8007/auth/signup", data, {
+      let res = await axios.post("https://skillbridge-2kec.onrender.com/auth/signup", data, {
         withCredentials: true,
       });
       setUser(res.data.user);

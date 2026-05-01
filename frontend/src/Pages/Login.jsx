@@ -16,7 +16,7 @@ export default function Login(){
 
 const formsubmit = async(data)=>{
     try {
-      let res = await axios.post("http://localhost:8007/auth/login", data, { withCredentials: true })
+      let res = await axios.post("https://skillbridge-2kec.onrender.com/auth/login", data, { withCredentials: true })
       setUser(res.data.user)
      const userRole = res.data.user.role;
     setUser(res.data.user);

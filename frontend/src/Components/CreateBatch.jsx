@@ -13,7 +13,7 @@ export default function CreateBatch({ onSuccess }) {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post("http://localhost:8007/batch/create", data, {
+      await axios.post("https://skillbridge-2kec.onrender.com/batch/create", data, {
         withCredentials: true,
       });
 
