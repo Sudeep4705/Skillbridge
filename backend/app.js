@@ -6,6 +6,7 @@ const authRoutes = require("./Routes/auth.routes")
 const batchRoutes =require("./Routes/batch.routes")
 const sessionRoutes = require("./Routes/session.routes")
 const attendanceRoutes = require("./Routes/attendance.routes")
+const userRoutes = require("./Routes/user.routes")
 const cors = require("cors")
 const app =  express()
 
@@ -37,6 +38,7 @@ app.use("/auth",authRoutes)
 app.use("/batch",batchRoutes)
 app.use("/session",sessionRoutes)
 app.use("/attendance",attendanceRoutes)
+app.use("/users",userRoutes)
 
 
 // server

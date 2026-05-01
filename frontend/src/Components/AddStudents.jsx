@@ -1,27 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { UserPlus } from "lucide-react";
 
 export default function AddStudents({ batchId }) {
+  const [students, setStudents] = useState([]);
   const [studentId, setStudentId] = useState("");
 
+  // fetch students
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const res = await axios.get(
+          "https://skillbridge-2kec.onrender.com/users/students",
+          { withCredentials: true }
+        );
+        setStudents(res.data);
+      } catch (err) {
+        toast.error("Failed to load students");
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
   const handleAdd = async () => {
-    if (!batchId) {
-      return toast.error("Select a batch first");
+    if (!studentId) {
+      return toast.error("Please select a student");
     }
 
     try {
       await axios.post(
-        "https://skillbridge-2kec.onrender.com/batch/add-student",
+        "http://localhost:8007/batch/add-student",
         { batchId, studentId },
         { withCredentials: true }
       );
-
-      toast.success("Student added");
+      toast.success("Student added successfully");
       setStudentId("");
     } catch (err) {
-      toast.error(err?.response?.data?.message);
+      toast.error(err?.response?.data?.message || "Error adding student");
     }
   };
 
@@ -31,16 +48,24 @@ export default function AddStudents({ batchId }) {
       {/* Title */}
       <div className="flex items-center gap-2 mb-5">
         <UserPlus className="text-blue-500" size={22} />
-        <h3 className="text-lg font-semibold text-gray-800">Add Student to Batch</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          Add Student to Batch
+        </h3>
       </div>
 
-      {/* Input */}
-      <input
-        placeholder="Enter Student ID"
+      {/* Dropdown */}
+      <select
         value={studentId}
         onChange={(e) => setStudentId(e.target.value)}
         className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
-      />
+      >
+        <option value="">Select Student</option>
+        {students.map((student) => (
+          <option key={student._id} value={student._id}>
+            {student.firstname} ({student.email})
+          </option>
+        ))}
+      </select>
 
       {/* Button */}
       <button
