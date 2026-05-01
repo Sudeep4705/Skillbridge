@@ -8,7 +8,10 @@ import SessionList from "../Components/SessionList";
 import CreateBatch from "../Components/CreateBatch";
 import AddStudents from "../Components/AddStudents";
 import CreateSession from "../Components/CreateSession";
-import { LogOut, BookOpen, MousePointerClick, Users, CalendarPlus, LayoutDashboard } from "lucide-react";
+import {
+  LogOut, BookOpen, MousePointerClick, Users,
+  CalendarPlus, LayoutDashboard, Menu, X, ChevronLeft
+} from "lucide-react";
 
 export default function Dashboard() {
   const { User, setUser } = useContext(AuthContext);
@@ -16,6 +19,7 @@ export default function Dashboard() {
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [refreshSessions, setRefreshSessions] = useState(false);
   const [activeTab, setActiveTab] = useState("sessions");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const canCreateBatch = User?.role === "Trainer" || User?.role === "Institution";
@@ -46,37 +50,68 @@ export default function Dashboard() {
     getBatches();
   }, []);
 
+  const handleBatchSelect = (id) => {
+    setSelectedBatchId(id);
+    setActiveTab("sessions");
+    setSidebarOpen(false); // close sidebar on mobile after selecting
+  };
+
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: "#fdf4f0", fontFamily: "'Inter', sans-serif" }}
     >
-
       {/* Top Navbar */}
-      <div className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
+      <div className="bg-white px-4 sm:px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-30">
         <div className="flex items-center gap-2">
+          {/* Hamburger — mobile only */}
+          <button
+            className="sm:hidden p-1 rounded-md text-gray-500 hover:text-orange-500 transition-colors"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
           <BookOpen className="text-orange-500" size={20} />
           <span className="font-bold text-gray-800 text-lg">SkillBridge</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">{User?.name}</span>
-          <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">{User?.role}</span>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="hidden sm:block text-sm text-gray-500">{User?.name}</span>
+          <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full hidden sm:inline">
+            {User?.role}
+          </span>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1 text-sm bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full transition-colors"
+            className="flex items-center gap-1 text-sm bg-orange-500 hover:bg-orange-600 text-white px-3 sm:px-4 py-2 rounded-full transition-colors"
           >
             <LogOut size={14} />
-            Logout
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </div>
 
       {/* Body: Sidebar + Main */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 relative">
 
-        {/* Left Sidebar — Batch List */}
-        <div className="w-64 bg-white shadow-sm p-5 flex flex-col gap-4 min-h-screen">
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 z-20 sm:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
+        {/* Left Sidebar */}
+        <div
+          className={`
+            fixed sm:static top-0 left-0 h-full sm:h-auto z-20
+            w-64 bg-white shadow-sm p-5 flex flex-col gap-4
+            transition-transform duration-300 ease-in-out
+            sm:translate-x-0
+            ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            sm:min-h-screen pt-16 sm:pt-5
+          `}
+        >
           {/* Sidebar Title */}
           <div className="flex items-center gap-2 mb-2">
             <LayoutDashboard size={18} className="text-orange-500" />
@@ -90,10 +125,7 @@ export default function Dashboard() {
             batch.map((data) => (
               <div
                 key={data._id}
-                onClick={() => {
-                  setSelectedBatchId(data._id);
-                  setActiveTab("sessions");
-                }}
+                onClick={() => handleBatchSelect(data._id)}
                 className={`p-3 rounded-xl cursor-pointer border transition-all
                   ${selectedBatchId === data._id
                     ? "bg-orange-50 border-orange-400"
@@ -110,7 +142,7 @@ export default function Dashboard() {
           {/* Create Batch button at bottom of sidebar */}
           {!isViewer && canCreateBatch && (
             <div
-              onClick={() => setActiveTab("createBatch")}
+              onClick={() => { setActiveTab("createBatch"); setSidebarOpen(false); }}
               className={`mt-auto p-3 rounded-xl cursor-pointer border transition-all flex items-center gap-2
                 ${activeTab === "createBatch"
                   ? "bg-orange-50 border-orange-400"
@@ -124,13 +156,29 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-6 flex flex-col gap-5 max-w-2xl">
+        <div className="flex-1 p-4 sm:p-6 flex flex-col gap-5 w-full min-w-0">
+
+          {/* Selected batch label on mobile */}
+          {selectedBatchId && (
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={() => { setSelectedBatchId(null); }}
+                className="text-orange-500 flex items-center gap-1 text-xs"
+              >
+                <ChevronLeft size={14} /> All Batches
+              </button>
+              <span className="text-xs text-gray-400">
+                {batch.find((b) => b._id === selectedBatchId)?.batchName}
+              </span>
+            </div>
+          )}
 
           {/* No batch selected */}
           {!selectedBatchId && activeTab !== "createBatch" && (
             <div className="flex items-center gap-2 text-sm text-gray-400 mt-4">
               <MousePointerClick size={16} className="text-orange-400" />
-              <p>Select a batch from the left to get started</p>
+              <p className="hidden sm:block">Select a batch from the left to get started</p>
+              <p className="sm:hidden">Tap the menu to select a batch</p>
             </div>
           )}
 
@@ -142,11 +190,11 @@ export default function Dashboard() {
           {/* Tabs — Sessions / Add Students / Create Session */}
           {selectedBatchId && activeTab !== "createBatch" && (
             <>
-              {/* Tab Buttons */}
-              <div className="flex gap-2">
+              {/* Tab Buttons — scrollable on mobile */}
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                 <button
                   onClick={() => setActiveTab("sessions")}
-                  className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                  className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all whitespace-nowrap
                     ${activeTab === "sessions"
                       ? "bg-orange-500 text-white border-orange-500"
                       : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
@@ -159,7 +207,7 @@ export default function Dashboard() {
                   <>
                     <button
                       onClick={() => setActiveTab("addStudent")}
-                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all whitespace-nowrap
                         ${activeTab === "addStudent"
                           ? "bg-orange-500 text-white border-orange-500"
                           : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
@@ -170,7 +218,7 @@ export default function Dashboard() {
 
                     <button
                       onClick={() => setActiveTab("createSession")}
-                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all
+                      className={`flex items-center gap-1 text-xs px-4 py-2 rounded-full border transition-all whitespace-nowrap
                         ${activeTab === "createSession"
                           ? "bg-orange-500 text-white border-orange-500"
                           : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"
@@ -202,7 +250,6 @@ export default function Dashboard() {
               )}
             </>
           )}
-
         </div>
       </div>
     </div>
