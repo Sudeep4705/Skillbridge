@@ -10,7 +10,7 @@ export default function ForgetPassword() {
 
   const emailsubmit = async (data) => {
     try {
-      let res = await axios.post("http://localhost:8007/auth/forgetPassword", data, { withCredentials: true })
+      let res = await axios.post("https://skillbridge-2kec.onrender.com/auth/forgetPassword", data, { withCredentials: true })
       toast.success(res.data.message)
     } catch(error) {
       toast.error(error.response?.data?.message || "Something went wrong")
