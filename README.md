@@ -47,7 +47,7 @@ It enables institutions, trainers, and students to manage batches, sessions, and
 ### 🔹 1. Clone the repository
 
 ```bash
-git clone <your-repo-link>
+git clone https://github.com/Sudeep4705/Skillbridge
 cd skillbridge
 ```
 
