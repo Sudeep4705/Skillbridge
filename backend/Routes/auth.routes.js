@@ -19,6 +19,6 @@ router.post("/forgetPassword",AuthContoller.forgetpassController)
 
 router.post("/reset-password/:token",AuthContoller.resetPassController)
 
-router.get("/students")
+
 
 module.exports = router
